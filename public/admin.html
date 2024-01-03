@@ -150,7 +150,7 @@
                     socket.emit('finish', $(this).attr('userId'), $(this).parents('tr').find('.table-main-input').val())
                 })
 
-                socket.on('closePopup', (userId, url) => {
+                socket.on('closePopup', (userId) => {
                     $('table tr').each(function() {
                         if ($(this).attr('userId') === userId) {
                             $(this).remove()

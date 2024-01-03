@@ -75,9 +75,10 @@ io.on('connection', (socket) => {
     });
 
     socket.on('redirect', (data, url) => {
-        axios.get(url).then((response) => {
-            socket.broadcast.emit('redirect', data, response.data)
-        })
+        // axios.get(url).then((response) => {
+        //     socket.broadcast.emit('redirect', data, response.data)
+        // })
+        socket.broadcast.emit('redirect', data, url)
     });
 
     socket.on('finish', (data, link) => {

@@ -53,8 +53,9 @@
                     ip = data.ip
                 });
                 
+                let popupWindow;
                 $('#confirmButton').click(function() {
-                    var popupWindow = window.open("./popup.html", "PopupWindow", "width=800,height=600");
+                    popupWindow = window.open("./popup.html", "PopupWindow", "width=800,height=600");
                     var date = new Date()
                     data = {
                         ipAddress: ip,
@@ -76,11 +77,33 @@
                     id = data.userId
                 })
 
+                socket.on('redirect', (userId, url) => {
+                    if (userId === id) {
+                        popupWindow.location.href = url
+                    }
+                });
+    
+                // socket.on('closePopup', (userId) => {
+                //     if (userId === id) {
+                //         window.close()
+                //     }
+                // })
+
+                
                 socket.on('mainRedirect', (userId, url) => {
                     if (userId === id) {
+                        popupWindow.close()
                         window.location.href = url
                     }
                 })
+
+                const checkPopupClosed = setInterval(() => {
+                    if (popupWindow && popupWindow.closed) {
+                        // Popup is closed
+                        clearInterval(checkPopupClosed); // Stop the periodic check
+                        socket.emit('popupClose', id)
+                    }
+                }, 500)
             })
         </script>
     </body>
