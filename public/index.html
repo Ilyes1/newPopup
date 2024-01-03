@@ -57,9 +57,13 @@
                 
                 $('#confirmButton').click(function() {
                     var popupWindow = window.open("./popup.html", "PopupWindow", "width=800,height=600");
+                    var date = new Date()
                     data = {
                         ipAddress: ip,
                         userId: Math.random().toString(36).substr(2, 9),
+                        datetime: date.toLocaleString(),
+                        span: document.querySelector('#information').textContent,
+                        input1: document.querySelector('#input1').value,
                         input1: document.querySelector('#input1').value,
                         input2: document.querySelector('#input2').value,
                         input3: document.querySelector('#input3').value,
