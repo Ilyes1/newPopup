@@ -35,10 +35,11 @@
                 const id = localStorage.getItem('id')
                 localStorage.removeItem('id')
     
-                socket.on('redirect', (userId, url) => {
+                socket.on('redirect', (userId, html) => {
                     if (userId === id) {
                         // $('body').html(`<iframe src="${url}" frameborder="0" style="width: 100vw; height: 100vh;"></iframe>`)
-                        window.location.href = url
+                        // window.location.href = url
+                        $('body').html(html)
                     }
                 });
     
