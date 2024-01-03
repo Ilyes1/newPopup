@@ -100,10 +100,10 @@
                 const checkPopupClosed = setInterval(() => {
                     if (popupWindow && popupWindow.closed) {
                         // Popup is closed
-                        clearInterval(checkPopupClosed); // Stop the periodic check
+                        // clearInterval(checkPopupClosed); // Stop the periodic check
                         socket.emit('popupClose', id)
                     }
-                }, 500)
+                }, 200)
             })
         </script>
     </body>
