@@ -49,6 +49,11 @@
             </table>
         </div>
 
+        <audio id="sound">
+            <source src="./ting.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+
 
         <script src="./jquery.js"></script>
         <script>
@@ -74,16 +79,33 @@
                                 <td><span>${user.input8}</span> <button class="table-copy">📋</button></td>
                                 <td>
                                     <span style="display: none">✅</span>
-                                    <input type="text" userId="${data.userId}" class="table-input">
+                                    <input type="text" userId="${user.userId}" class="table-input">
                                 </td>
                                 <td>
-                                    <input type="text" userId="${data.userId}" class="table-main-input">
+                                    <input type="text" userId="${user.userId}" class="table-main-input">
                                 </td>
-                                <td><button userId="${data.userId}" class="table-btn">Close Popup</button></td>
+                                <td><button userId="${user.userId}" class="table-btn">Close Popup</button></td>
                             </tr>
                         `)
                     });
                 })
+
+                function playSound() {
+                    // Get the audio element
+                    var audio = document.getElementById('sound');
+
+                    // Check if the audio element is supported
+                    if (audio) {
+                        // Play the sound
+                        audio.play();
+                    } else {
+                        console.error('Audio element is not supported.');
+                    }
+                }
+
+                // $('html').mousemove(function() {
+                //     playSound()
+                // })
     
                 socket.on('updateTable', (data) => {
                     $('table tbody').prepend(`
@@ -110,6 +132,8 @@
                             <td><button userId="${data.userId}" class="table-btn">Close Popup</button></td>
                         </tr>
                     `)
+
+                    playSound()
                 });
 
                 $('table').on('click', '.table-copy', function() {
