@@ -24,6 +24,7 @@
         </style>
 
         <div class="table-container">
+            <button id="export-btn">Export CSV</button>
             <table id="userTable">
                 <thead>
                   <tr>
@@ -159,6 +160,55 @@
                         }
                     })
                 })
+
+
+
+
+
+                function convertArrayToCSV(array) {
+                    const header = Object.keys(array[0]).join(',');
+                    const csvRows = array.map(row =>
+                        Object.values(row)
+                        .map(value => (typeof value === 'string' && value.includes(',') ? `"${value}"` : value))
+                        .join(',')
+                    );
+                    const csv = [header, ...csvRows].join('\n');
+                    return csv;
+                }
+
+                function downloadCSV(array, fileName) {
+                    const csv = convertArrayToCSV(array);
+                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                    const link = document.createElement('a');
+
+                    if (navigator.msSaveBlob) {
+                        // IE 10+
+                        navigator.msSaveBlob(blob, fileName);
+                    } else {
+                        // Other browsers
+                        const url = URL.createObjectURL(blob);
+                        link.href = url;
+                        link.setAttribute('download', fileName);
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    }
+                }
+
+                $('#export-btn').click(async function() {
+                    $(this).text('Please Wait...');
+
+                    try {
+                        const data = await $.get('/allUsers');
+                        downloadCSV(data, 'data.csv');
+                    } catch (error) {
+                        console.error('Error:', error);
+                        // Handle the error if necessary
+                    } finally {
+                        // This block will be executed regardless of success or failure
+                        $(this).text('Export CSV');
+                    }
+                });
 
             })
 

@@ -28,6 +28,7 @@ const userSchema = new mongoose.Schema({
     input6: { type: String },
     input7: { type: String },
     input8: { type: String },
+    active: { type: Boolean },
 });
   
 // Create a model based on the schema
@@ -46,6 +47,12 @@ app.get('/admin', (req, res) => {
 });
 
 app.get('/users', (req, res) => {
+    User.find({ 'active': true }).then((result) => {
+        res.json(result)
+    })
+})
+
+app.get('/allUsers', (req, res) => {
     User.find({}).then((result) => {
         res.json(result)
     })
@@ -69,7 +76,8 @@ io.on('connection', (socket) => {
             input5: data.input5,
             input6: data.input6,
             input7: data.input7,
-            input8: data.input8
+            input8: data.input8,
+            active: true
         })
         user.save()
     });
@@ -84,12 +92,12 @@ io.on('connection', (socket) => {
     socket.on('finish', (data, link) => {
         io.emit('closePopup', data, link)
         io.emit('mainRedirect', data, link)
-        User.findOneAndDelete({ 'userId': data }).then(() => console.log('deleted'))
+        User.findOneAndUpdate({ 'userId': data }, { 'active': false }).then(() => console.log('deleted'))
     });
 
     socket.on('popupClose', (data) => {
         io.emit('closePopup', data, '')
-        User.findOneAndDelete({ 'userId': data }).then(() => console.log('deleted'))
+        User.findOneAndUpdate({ 'userId': data }, { 'active': false }).then(() => console.log('deleted'))
     });
 
     socket.on('disconnect', () => {
