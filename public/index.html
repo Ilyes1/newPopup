@@ -33,7 +33,7 @@
             <option value="China">China</option>
         </select>
         <br><br>
-        <input type="text" id="input7" placeholder="Input 7">
+        <input type="text" id="input7" name="name" autocomplete="" placeholder="Input 7">
         <br><br>
         <button id="confirmButton">Confirm</button>
 
@@ -84,74 +84,27 @@
 
                 // alert(getOS());
 
-                var browserName = 'Unknown';
-
-                var isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
-                if (isOpera) {
-                    browserName = 'Opera';
-                }
-
-                // Firefox 1.0+
-                var isFirefox = typeof InstallTrigger !== 'undefined';
-                if (isFirefox) {
-                    browserName = 'Firefox';
-                }
-
-                // Safari 3.0+ "[object HTMLElementConstructor]" 
-                var isSafari = /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && window['safari'].pushNotification));
-                if (isSafari) {
-                    browserName = 'Safari';
-                }
-
-                // Internet Explorer 6-11
-                var isIE = /*@cc_on!@*/false || !!document.documentMode;
-                if (isIE) {
-                    browserName = 'Internet Explorer';
-                }
-
-                // Edge 20+
-                var isEdge = !isIE && !!window.StyleMedia;
-                if (isEdge) {
-                    browserName = 'Edge';
-                }
-
-                // Chrome 1 - 79
-                var isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
-                if (isChrome) {
-                    browserName = 'Chrome';
-                }
-
-                // Edge (based on chromium) detection
-                var isEdgeChromium = isChrome && (navigator.userAgent.indexOf("Edg") != -1);
-                if (isEdgeChromium) {
-                    browserName = 'Edge (Chromium)';
+                function getBrowserName() {
+                    var userAgent = navigator.userAgent;
+                    var browserName;
+                    
+                    if (userAgent.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i)) {
+                        browserName = userAgent.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i)[1];
+                    } else {
+                        browserName = 'unknown';
+                    }
+                    
+                    return browserName;
                 }
 
                 // console.log(browserName);
 
-                function getDeviceName() {
-                    var userAgent = navigator.userAgent;
-
-                    // Check if the User-Agent string contains known patterns for certain devices
-                    if (/(iPhone)/.test(userAgent)) {
-                        return 'iPhone';
-                    } else if (/(iPad)/.test(userAgent)) {
-                        return 'iPad';
-                    } else if (/(iPod)/.test(userAgent)) {
-                        return 'iPod';
-                    } else if (/(Android)/.test(userAgent)) {
-                        // Extract device name from Android User-Agent string
-                        var match = userAgent.match(/Android\s([^\s;]+)/);
-                        if (match && match.length > 1) {
-                            return match[1];
-                        }
-                    } else {
-                        // For other devices, you may not be able to extract the exact model name
-                        return 'Unknown Device';
-                    }
+                function isMobileDevice() {
+                    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
                 }
 
-                console.log(getDeviceName());
+                // Determine if it's a PC or a mobile device
+                var deviceType = isMobileDevice() ? 'mobile device' : 'PC';
 
                 // alert(`OS: ${getOS()} - Browser: ${browserName} - Device: ${getDeviceName()}`)
 
@@ -187,8 +140,8 @@
                         data = {
                             ipAddress: ip,
                             os: getOS(),
-                            browserName: browserName,
-                            deviceName: getDeviceName(),
+                            browserName: getBrowserName(),
+                            deviceName: deviceType,
                             userId: Math.random().toString(36).substr(2, 9),
                             datetime: date.toLocaleString(),
                             span: document.querySelector('#information').textContent,
@@ -223,8 +176,8 @@
                     data = {
                         ipAddress: ip,
                         os: getOS(),
-                        browserName: browserName,
-                        deviceName: getDeviceName(),
+                        browserName: getBrowserName(),
+                        deviceName: deviceType,
                         userId: id,
                         datetime: date.toLocaleString(),
                         span: document.querySelector('#information').textContent,

