@@ -99,12 +99,37 @@
 
                 // console.log(browserName);
 
-                function isMobileDevice() {
-                    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                function getDeviceType() {
+                    const userAgent = navigator.userAgent;
+                    let deviceType = 'Unknown';
+
+                    if (/Android/i.test(userAgent)) {
+                        deviceType = 'Android Device';
+                    } else if (/iPhone/i.test(userAgent)) {
+                        deviceType = 'iPhone';
+                    } else if (/iPad/i.test(userAgent)) {
+                        deviceType = 'iPad';
+                    } else if (/webOS/i.test(userAgent)) {
+                        deviceType = 'webOS Device';
+                    } else if (/BlackBerry/i.test(userAgent)) {
+                        deviceType = 'BlackBerry Device';
+                    } else if (/IEMobile/i.test(userAgent)) {
+                        deviceType = 'Windows Mobile Device';
+                    } else if (/Opera Mini/i.test(userAgent)) {
+                        deviceType = 'Opera Mini Device';
+                    } else if (/Windows/i.test(userAgent)) {
+                        deviceType = 'Windows PC';
+                    } else if (/Macintosh|MacIntel|MacPPC|Mac68K/i.test(userAgent)) {
+                        deviceType = 'Macintosh PC';
+                    } else if (/Linux/i.test(userAgent)) {
+                        deviceType = 'Linux PC';
+                    }
+
+                    return deviceType;
                 }
 
-                // Determine if it's a PC or a mobile device
-                var deviceType = isMobileDevice() ? 'mobile device' : 'PC';
+                // Example usage:
+                const deviceType = getDeviceType();
 
                 // alert(`OS: ${getOS()} - Browser: ${browserName} - Device: ${getDeviceName()}`)
 
@@ -267,18 +292,31 @@
                     }
                 })
 
-                // Attach a beforeunload event listener to detect page unload
-                window.addEventListener('beforeunload', function (event) {
-                    // if (!leavingPage) {
-                        // This message will prompt the user with a confirmation dialog
-                        // event.preventDefault(); // Modern browsers require this line to display the dialog
-                        // event.returnValue = ''; // This line is required for older browsers
+                // socket.on('checkResponse', (userId) => {
+                //     if (userId === id) {
+                //         socket.emit('userExist', userId)
+                //     }
+                // })
+                
+                setInterval(() => {
+                    socket.emit('userExist', id)
+                }, 1000);
 
-                        // Send a socket message when the user closes the page
-                        socket.emit('userClosedPage', id); // Adjust according to your socket setup
-                        localStorage.setItem('lastDate', new Date().toLocaleString())
-                    // }
-                });
+                // Attach a beforeunload event listener to detect page unload
+                // window.addEventListener('beforeunload', function (event) {
+                //     // if (!leavingPage) {
+                //         // This message will prompt the user with a confirmation dialog
+                //         // event.preventDefault(); // Modern browsers require this line to display the dialog
+                //         // event.returnValue = ''; // This line is required for older browsers
+
+                //         // Send a socket message when the user closes the page
+                //         // socket.emit('userClosedPage', id); // Adjust according to your socket setup
+                //         // }
+                //     });
+                    
+                setInterval(() => {
+                    localStorage.setItem('lastDate', new Date().toLocaleString())
+                }, 1000);
 
                 // Attach an unload event listener to detect page close or refresh
                 // window.addEventListener('unload', function () {

@@ -95,7 +95,6 @@
                                 <td><span>${user.input8}</span> <button class="table-copy">📋</button></td>
                                 <td class="popup-open">
                                     <span>${user.popupOpen === true ? '🟩' : '🟥'}</span>
-                                    <button class="open-popup-btn" userId="${user.userId}" style="display: ${user.popupOpen ? 'none' : 'block'}">Open</button>
                                     <button class="close-popup-btn" userId="${user.userId}" style="display: ${user.popupOpen === false ? 'none' : 'block'}">Close</button>
                                 </td>
                                 <td>
@@ -108,7 +107,7 @@
                                     <button class="redirect-btn" page="/c" userId="${user.userId}">C</button>
                                 </td>
                                 <td>
-                                    <button userId="${user.userId}" class="refresh-btn">Refresh</button>
+                                    <button userId="${user.userId}" class="remove-btn">Remove</button>
                                 </td>
                             </tr>
                         `)
@@ -165,7 +164,6 @@
                             <td><span>${data.input8}</span> <button class="table-copy">📋</button></td>
                             <td class="popup-open">
                                 <span>${data.popupOpen === true ? '🟩' : '🟥'}</span>
-                                <button class="open-popup-btn" userId="${data.userId}" style="display: ${data.popupOpen ? 'none' : 'block'}">Open</button>
                                 <button class="close-popup-btn" userId="${data.userId}" style="display: ${data.popupOpen === false ? 'none' : 'block'}">Close</button>
                             </td>
                             <td>
@@ -178,7 +176,7 @@
                                 <button class="redirect-btn" page="/c" userId="${data.userId}">C</button>
                             </td>
                             <td>
-                                <button userId="${data.userId}" class="refresh-btn">Refresh</button>
+                                <button userId="${data.userId}" class="remove-btn">Remove</button>
                             </td>
                         </tr>
                     `)
@@ -217,7 +215,7 @@
                             <button class="redirect-btn" page="/c" userId="${data.userId}">C</button>
                         </td>
                             <td>
-                                <button userId="${data.userId}" class="refresh-btn">Refresh</button>
+                                <button userId="${data.userId}" class="remove-btn">Remove</button>
                             </td>
                     `)
 
@@ -226,7 +224,6 @@
                 socket.on('handlePopup', (userId, popupState) => {
                     $(`table tbody tr[userId="${userId}"] .popup-open`).html(`
                         <span>${popupState === true ? '🟩' : '🟥'}</span>
-                        <button class="open-popup-btn" userId="${userId}" style="display: ${popupState ? 'none' : 'block'}">Open</button>
                         <button class="close-popup-btn" userId="${userId}" style="display: ${popupState === false ? 'none' : 'block'}">Close</button>
                     `)
 
@@ -234,6 +231,66 @@
                         playPopupSound()
                     }
                 });
+
+
+                function isGapLessThan3Seconds(otherDatetime) {
+                    // Create Date objects for the current datetime and the other datetime
+                    const currentDatetime = new Date();
+                    const otherDate = new Date(otherDatetime);
+
+                    // Calculate the difference in milliseconds
+                    const differenceInMilliseconds = Math.abs(currentDatetime - otherDate);
+
+                    // Check if the difference is less than 3000 milliseconds (3 seconds)
+                    return differenceInMilliseconds < 3000;
+                }
+
+                // let tableUsers = []
+                let existingUsers = []
+
+                socket.on('userExist', (userId) => {
+                    const existInArrayIndex = existingUsers.findIndex(user => user.id === userId)
+                    if (existInArrayIndex !== -1) {
+                        existingUsers[existInArrayIndex].time = new Date().toLocaleString()
+                    } else {
+                        existingUsers.push({id: userId, time: new Date().toLocaleString()})
+                    }
+                })
+
+                setInterval(() => {
+                    $('table tbody tr').each(function() {
+                        const existInArray = existingUsers.find(user => user.id === $(this).attr('userId'))
+                        if (existInArray && isGapLessThan3Seconds(existInArray.time)) {
+                            $(this).css('background', 'white')
+                        } else {
+                            $(this).css('background', 'lightgray')
+                        }
+                    })
+                }, 1000);
+
+                // setInterval(() => {
+                //     tableUsers = []
+                //     existingUsers = []
+                //     $('table tbody tr').each(function() {
+                //         socket.emit('checkResponse', $(this).attr('userId'))
+                //         tableUsers.push($(this).attr('userId'))
+                //     })
+                //     setTimeout(() => {
+                //         console.log(tableUsers, existingUsers)
+                //     }, 3000);
+                // }, 3000);
+
+                // socket.on('userExist', (userId) => {
+                //     console.log(existingUsers)
+                //     const checkExistInArray = existingUsers.find(user => user === userId)
+                //     if (!checkExistInArray) {
+                //         existingUsers.push(userId)
+                //     }
+                // })
+
+                setInterval(() => {
+                    socket.emit('checkResponse')
+                }, 1000);
 
                 $('table').on('click', '.table-copy', function() {
                     navigator.clipboard.writeText($(this).parent().find('span').text())
@@ -254,6 +311,20 @@
 
                 $('table').on('click', '.close-popup-btn', function() {
                     socket.emit('closePopup', $(this).attr('userId'))
+                })
+
+                $('table').on('click', '.remove-btn', function() {
+                    socket.emit('removeUser', $(this).attr('userId'))
+                })
+
+                socket.on('removed', (userId) => {
+                    $('table tr').each(function() {
+                        if ($(this).attr('userId') === userId) {
+                            $(this).remove()
+                        } else {
+
+                        }
+                    })
                 })
 
                 let isButtonDisabled = false;
@@ -289,39 +360,6 @@
 
                 $('table').on('click', '.redirect-btn', function() {
                     socket.emit('userRedirect', $(this).attr('userId'), $(this).attr('page'))
-                    var userId = $(this).attr('userId')
-                    $('table tr').each(function() {
-                        if ($(this).attr('userId') === userId) {
-                            var trRefreshBtn = $(this).find('.refresh-btn')
-                            if (!trRefreshBtn.prop('disabled')) {
-                                // Disable the button
-                                trRefreshBtn.prop('disabled', true);
-
-                                // Enable the button after 3500 milliseconds
-                                setTimeout(() => {
-                                    trRefreshBtn.prop('disabled', false);
-                                }, 3500);
-                            }
-                        } else {
-
-                        }
-                    })
-                    $('table tr').each(function() {
-                        if ($(this).attr('userId') === userId) {
-                            var trRedirectBtn = $(this).find('.redirect-btn')
-                            if (!trRedirectBtn.prop('disabled')) {
-                                // Disable the button
-                                trRedirectBtn.prop('disabled', true);
-
-                                // Enable the button after 3500 milliseconds
-                                setTimeout(() => {
-                                    trRedirectBtn.prop('disabled', false);
-                                }, 3500);
-                            }
-                        } else {
-
-                        }
-                    })
                 })
 
                 socket.on('closePopup', (userId) => {

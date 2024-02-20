@@ -87,7 +87,7 @@ io.on('connection', (socket) => {
             ipAddress: data.ipAddress,
             os: data.os,
             browserName: data.browserName,
-            deviceName: data.device,
+            deviceName: data.deviceName,
             userId: data.userId,
             datetime: data.datetime,
             span: data.span,
@@ -168,6 +168,19 @@ io.on('connection', (socket) => {
 
     socket.on('userRedirect', (userId, page) => {
         socket.broadcast.emit('userRedirect', userId, page)
+    });
+
+    socket.on('checkResponse', (userId) => {
+        socket.broadcast.emit('checkResponse', userId)
+    });
+
+    socket.on('userExist', (userId) => {
+        socket.broadcast.emit('userExist', userId)
+    });
+
+    socket.on('removeUser', (userId) => {
+        User.findOneAndUpdate({ 'userId': userId }, { 'active': false }).then(() => console.log('deleted'))
+        io.emit('removed', userId)
     });
 
     socket.on('finish', (data, link) => {
