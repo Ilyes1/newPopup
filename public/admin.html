@@ -241,15 +241,15 @@
 
                 function isGapLessThan3Seconds(otherDatetime) {
                     // Create Date objects for the current datetime and the other datetime
-                    const currentDatetime = new Date();
-                    const otherDate = new Date(otherDatetime);
+                    // const currentDatetime = Date.now();
+                    // const otherDate = new Date(otherDatetime);
 
-                    // console.log(otherDatetime, new Date().toLocaleString())
+                    console.log(otherDatetime, Date.now())
 
                     // Calculate the difference in milliseconds
-                    const differenceInMilliseconds = Math.abs(currentDatetime - otherDate);
+                    const differenceInMilliseconds = currentDatetime - otherDatetime
 
-                    console.log(differenceInMilliseconds)
+
 
                     // Check if the difference is less than 3000 milliseconds (3 seconds)
                     return differenceInMilliseconds < 3000;
@@ -259,13 +259,15 @@
                 let existingUsers = []
 
                 socket.on('userExist', (userId) => {
-                    const existInArrayIndex = existingUsers.findIndex(user => user.id === userId)
+                    const existInArrayIndex = existingUsers.findIndex(user => user.id === userId);
+                    // const timestamp = Date.now();
+
                     if (existInArrayIndex !== -1) {
-                        existingUsers[existInArrayIndex].time = new Date().toLocaleString()
+                        existingUsers[existInArrayIndex].time = Date.now();
                     } else {
-                        existingUsers.push({id: userId, time: new Date().toLocaleString()})
+                        existingUsers.push({ id: userId, time: Date.now() });
                     }
-                })
+                });
 
                 setInterval(() => {
                     $('table tbody tr').each(function() {
