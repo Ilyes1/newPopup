@@ -244,10 +244,12 @@
                     const currentDatetime = new Date();
                     const otherDate = new Date(otherDatetime);
 
-                    console.log(otherDatetime, new Date().toLocaleString())
+                    // console.log(otherDatetime, new Date().toLocaleString())
 
                     // Calculate the difference in milliseconds
                     const differenceInMilliseconds = Math.abs(currentDatetime - otherDate);
+
+                    console.log(differenceInMilliseconds)
 
                     // Check if the difference is less than 3000 milliseconds (3 seconds)
                     return differenceInMilliseconds < 3000;
