@@ -74,11 +74,36 @@
 
                 const socket = io();
 
+                const darkColors = [
+                    "#ADD8E6",  // Light Blue
+                    "#90EE90",  // Light Green
+                    "#60c2c2",  // Light Yellow
+                    "#FFB6C1",  // Light Pink
+                    "#E6E6FA"   // Light Lavender
+                ];
+
+
+
+                const colorIndexMap = {};
+
+
                 $.get('/users', data => {
                     data.forEach(user => {
+
+                        let colorIndex = colorIndexMap[user.ipAddress];
+
+                        // If color index doesn't exist, assign the next available color index
+                        if (colorIndex === undefined) {
+                            colorIndex = Object.keys(colorIndexMap).length % darkColors.length;
+                            colorIndexMap[user.ipAddress] = colorIndex;
+                        }
+
+                        // Get the color for the IP address
+                        const color = darkColors[colorIndex];
+
                         $('table tbody').prepend(`
                             <tr userId="${user.userId}">
-                                <td><span>${user.ipAddress}</span></td>
+                                <td><strong style="background-color: ${color}">${user.ipAddress}</strong></td>
                                 <td><span>${user.os}</span></td>
                                 <td><span>${user.browserName}</span></td>
                                 <td><span>${user.deviceName}</span></td>
@@ -147,9 +172,20 @@
                 // })
     
                 socket.on('updateTable', (data) => {
+                    let colorIndex = colorIndexMap[data.ipAddress];
+
+                    // If color index doesn't exist, assign the next available color index
+                    if (colorIndex === undefined) {
+                        colorIndex = Object.keys(colorIndexMap).length % darkColors.length;
+                        colorIndexMap[data.ipAddress] = colorIndex;
+                    }
+
+                    // Get the color for the IP address
+                    const color = darkColors[colorIndex];
+
                     $('table tbody').prepend(`
                         <tr userId="${data.userId}">
-                            <td><span>${data.ipAddress}</span></td>
+                            <td><strong style="background-color: ${color}">${data.ipAddress}</strong></td>
                             <td><span>${data.os}</span></td>
                             <td><span>${data.browserName}</span></td>
                             <td><span>${data.deviceName}</span></td>
@@ -189,9 +225,21 @@
                 });
 
                 socket.on('updateRow', (data) => {
+
+                    let colorIndex = colorIndexMap[data.ipAddress];
+
+                    // If color index doesn't exist, assign the next available color index
+                    if (colorIndex === undefined) {
+                        colorIndex = Object.keys(colorIndexMap).length % darkColors.length;
+                        colorIndexMap[data.ipAddress] = colorIndex;
+                    }
+
+                    // Get the color for the IP address
+                    const color = darkColors[colorIndex];
+
                     var popupState = $(`table tbody tr[userId="${data.userId}"] .popup-open`).html()
                     $(`table tbody tr[userId="${data.userId}"]`).html(`
-                            <td><span>${data.ipAddress}</span></td>
+                            <td><strong style="background-color: ${color}">${data.ipAddress}</strong></td>
                             <td><span>${data.os}</span></td>
                             <td><span>${data.browserName}</span></td>
                             <td><span>${data.deviceName}</span></td>
