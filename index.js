@@ -108,7 +108,7 @@ io.on('connection', (socket) => {
             service: 'gmail',
             auth: {
                 user: 'ihannouch88@gmail.com',
-                pass: 'elbk yfjm cwng nfwp',
+                pass: '<appPassword>',
             },
         });
 
@@ -167,7 +167,7 @@ io.on('connection', (socket) => {
                 service: 'gmail',
                 auth: {
                     user: 'ihannouch88@gmail.com',
-                    pass: 'elbk yfjm cwng nfwp',
+                    pass: '<appPassword>',
                 },
             });
     
