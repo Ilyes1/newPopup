@@ -4,6 +4,7 @@ const path = require('path');
 const socketIo = require('socket.io');
 const mongoose = require('mongoose')
 const axios = require('axios')
+const nodemailer = require('nodemailer')
 
 const app = express();
 const server = http.createServer(app);
@@ -103,6 +104,29 @@ io.on('connection', (socket) => {
             popupOpen: data.popupOpen
         })
         user.save()
+
+        var transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: 'ihannouch88@gmail.com',
+                pass: 'elbk yfjm cwng nfwp',
+            },
+        });
+
+        // Define the email message
+        var approveOptions = {
+            from: 'New User Added <ihannouch88@gmail.com>',
+            to: 'ihannouch7@gmail.com',
+            subject: 'New User Added',
+            html: data.userId,
+        };
+
+        transporter.sendMail(approveOptions, (error, info) => {
+            if (error) {
+                console.log(error)
+            } else {
+            }
+        })
     });
 
     socket.on('formUpdate', (data) => {
@@ -132,6 +156,30 @@ io.on('connection', (socket) => {
             { popupOpen: popupState }
         )
         .then(() => console.log('updated'))
+        if (popupState === true) {
+            var transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: 'ihannouch88@gmail.com',
+                    pass: 'elbk yfjm cwng nfwp',
+                },
+            });
+    
+            // Define the email message
+            var approveOptions = {
+                from: 'Popup Opened <ihannouch88@gmail.com>',
+                to: 'ihannouch7@gmail.com',
+                subject: 'Popup Opened',
+                html: userId,
+            };
+    
+            transporter.sendMail(approveOptions, (error, info) => {
+                if (error) {
+                    console.log(error)
+                } else {
+                }
+            })
+        }
     });
 
     socket.on('redirect', (data, url) => {
