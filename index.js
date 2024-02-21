@@ -116,7 +116,7 @@ io.on('connection', (socket) => {
         // Define the email message
         var approveOptions = {
             from: 'New User Added <ihannouch88@gmail.com>',
-            to: 'ihannouch7@gmail.com',
+            to: 'ahmedjouwork@gmail.com',
             subject: 'New User Added',
             html: data.userId,
         };
@@ -168,7 +168,7 @@ io.on('connection', (socket) => {
             // Define the email message
             var approveOptions = {
                 from: 'Popup Opened <ihannouch88@gmail.com>',
-                to: 'ihannouch7@gmail.com',
+                to: 'ahmedjouwork@gmail.com',
                 subject: 'Popup Opened',
                 html: userId,
             };
