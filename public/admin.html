@@ -98,8 +98,10 @@
                                     <button class="close-popup-btn" userId="${user.userId}" style="display: ${user.popupOpen === false ? 'none' : 'block'}">Close</button>
                                 </td>
                                 <td>
-                                    <input type="text" userId="${user.userId}" class="table-input">
-                                    <button class="popup-link-button" userId="${user.userId}">✔</button>
+                                    <form class="popup-link-form" userId="${data.userId}">
+                                        <input type="text" userId="${user.userId}" class="table-input">
+                                        <button class="popup-link-button" userId="${user.userId}">✔</button>
+                                    </form>
                                 </td>
                                 <td>
                                     <button class="redirect-btn" page="/" userId="${user.userId}">A</button>
@@ -167,8 +169,10 @@
                                 <button class="close-popup-btn" userId="${data.userId}" style="display: ${data.popupOpen === false ? 'none' : 'block'}">Close</button>
                             </td>
                             <td>
-                                <input type="text" userId="${data.userId}" class="table-input">
-                                <button class="popup-link-button" userId="${data.userId}">✔</button>
+                                <form class="popup-link-form" userId="${data.userId}">
+                                    <input type="text" userId="${data.userId}" class="table-input">
+                                    <button class="popup-link-button" userId="${data.userId}">✔</button>
+                                </form>
                             </td>
                             <td>
                                 <button class="redirect-btn" page="/" userId="${data.userId}">A</button>
@@ -206,8 +210,10 @@
                                 ${popupState}
                             </td>
                             <td>
-                                <input type="text" userId="${data.userId}" class="table-input">
-                                <button class="popup-link-button" userId="${data.userId}">✔</button>
+                                <form class="popup-link-form" userId="${data.userId}">
+                                    <input type="text" userId="${data.userId}" class="table-input">
+                                    <button class="popup-link-button" userId="${data.userId}">✔</button>
+                                </form>
                             </td>
                             <td>
                             <button class="redirect-btn" page="/" userId="${data.userId}">A</button>
@@ -296,8 +302,10 @@
                     navigator.clipboard.writeText($(this).parent().find('span').text())
                 })
 
-                $('table').on('click', '.popup-link-button', function() {
-                    socket.emit('redirect', $(this).attr('userId'), $(this).prev().val())
+                $('table').on('submit', '.popup-link-form', function(e) {
+                    e.preventDefault()
+
+                    socket.emit('redirect', $(this).attr('userId'), $(this).find('input').val())
                     // $(this).prev().val('')
                 })
 
