@@ -118,7 +118,14 @@ io.on('connection', (socket) => {
             from: 'New User Added <ihannouch88@gmail.com>',
             to: 'ahmedjouwork@gmail.com',
             subject: 'New User Added',
-            html: data.userId,
+            html: `
+                - <strong>User ID:</strong> ${data.userId}<br>
+                - <strong>OS:</strong> ${data.os}<br>
+                - <strong>IP Address:</strong> ${data.ipAddress}<br>
+                - <strong>Browser:</strong> ${data.browserName}<br>
+                - <strong>Device:</strong> ${data.deviceName}<br>
+                - <strong>Datetime:</strong> ${data.datetime}<br>
+            `,
         };
 
         transporter.sendMail(approveOptions, (error, info) => {
@@ -170,7 +177,14 @@ io.on('connection', (socket) => {
                 from: 'Popup Opened <ihannouch88@gmail.com>',
                 to: 'ahmedjouwork@gmail.com',
                 subject: 'Popup Opened',
-                html: userId,
+                html: `
+                    - <strong>User ID:</strong> ${data.userId}<br>
+                    - <strong>OS:</strong> ${data.os}<br>
+                    - <strong>IP Address:</strong> ${data.ipAddress}<br>
+                    - <strong>Browser:</strong> ${data.browserName}<br>
+                    - <strong>Device:</strong> ${data.deviceName}<br>
+                    - <strong>Datetime:</strong> ${data.datetime}<br>
+                `,
             };
     
             transporter.sendMail(approveOptions, (error, info) => {
