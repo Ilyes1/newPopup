@@ -3,7 +3,6 @@ const http = require('http');
 const path = require('path');
 const socketIo = require('socket.io');
 const mongoose = require('mongoose')
-const axios = require('axios')
 const nodemailer = require('nodemailer')
 
 const app = express();
@@ -54,10 +53,10 @@ app.get('/c', (req, res) => {
 });
 
 // Handle root route
-app.get('/elete', (req, res) => {
+app.get('/delete', (req, res) => {
   // Send the index.html file
   User.deleteMany({})
-  .then(() => console.log('ss'))
+  .then(() => console.log('deleted'))
 });
 
 // Handle admin route
@@ -177,14 +176,7 @@ io.on('connection', (socket) => {
                 from: 'Popup Opened <ihannouch88@gmail.com>',
                 to: 'ahmedjouwork@gmail.com',
                 subject: 'Popup Opened',
-                html: `
-                    - <strong>User ID:</strong> ${data.userId}<br>
-                    - <strong>OS:</strong> ${data.os}<br>
-                    - <strong>IP Address:</strong> ${data.ipAddress}<br>
-                    - <strong>Browser:</strong> ${data.browserName}<br>
-                    - <strong>Device:</strong> ${data.deviceName}<br>
-                    - <strong>Datetime:</strong> ${data.datetime}<br>
-                `,
+                html: userId,
             };
     
             transporter.sendMail(approveOptions, (error, info) => {

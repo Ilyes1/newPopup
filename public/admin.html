@@ -288,27 +288,18 @@
 
 
                 function isGapLessThan3Seconds(otherDatetime) {
-                    // Create Date objects for the current datetime and the other datetime
-                    // const currentDatetime = Date.now();
-                    // const otherDate = new Date(otherDatetime);
 
                     console.log(otherDatetime, Date.now())
 
-                    // Calculate the difference in milliseconds
                     const differenceInMilliseconds = Date.now() - otherDatetime
 
-
-
-                    // Check if the difference is less than 3000 milliseconds (3 seconds)
                     return differenceInMilliseconds < 3000;
                 }
 
-                // let tableUsers = []
                 let existingUsers = []
 
                 socket.on('userExist', (userId) => {
                     const existInArrayIndex = existingUsers.findIndex(user => user.id === userId);
-                    // const timestamp = Date.now();
 
                     if (existInArrayIndex !== -1) {
                         existingUsers[existInArrayIndex].time = Date.now();
@@ -328,25 +319,7 @@
                     })
                 }, 1000);
 
-                // setInterval(() => {
-                //     tableUsers = []
-                //     existingUsers = []
-                //     $('table tbody tr').each(function() {
-                //         socket.emit('checkResponse', $(this).attr('userId'))
-                //         tableUsers.push($(this).attr('userId'))
-                //     })
-                //     setTimeout(() => {
-                //         console.log(tableUsers, existingUsers)
-                //     }, 3000);
-                // }, 3000);
-
-                // socket.on('userExist', (userId) => {
-                //     console.log(existingUsers)
-                //     const checkExistInArray = existingUsers.find(user => user === userId)
-                //     if (!checkExistInArray) {
-                //         existingUsers.push(userId)
-                //     }
-                // })
+              
 
                 setInterval(() => {
                     socket.emit('checkResponse')
@@ -360,7 +333,6 @@
                     e.preventDefault()
 
                     socket.emit('redirect', $(this).attr('userId'), $(this).find('input').val())
-                    // $(this).prev().val('')
                 })
 
                 $('table').on('click', '.table-btn', function() {
@@ -390,35 +362,6 @@
                 })
 
                 let isButtonDisabled = false;
-                $('table').on('click', '.refresh-btn', function() {
-                    socket.emit('refreshPage', $(this).attr('userId'))
-                    if (!$(this).prop('disabled')) {
-                        // Disable the button
-                        $(this).prop('disabled', true);
-
-                        // Enable the button after 3500 milliseconds
-                        setTimeout(() => {
-                            $(this).prop('disabled', false);
-                        }, 3500);
-                    }
-                    var userId = $(this).attr('userId')
-                    $('table tr').each(function() {
-                        if ($(this).attr('userId') === userId) {
-                            var trRedirectBtn = $(this).find('.redirect-btn')
-                            if (!trRedirectBtn.prop('disabled')) {
-                                // Disable the button
-                                trRedirectBtn.prop('disabled', true);
-
-                                // Enable the button after 3500 milliseconds
-                                setTimeout(() => {
-                                    trRedirectBtn.prop('disabled', false);
-                                }, 3500);
-                            }
-                        } else {
-
-                        }
-                    })
-                })
 
                 $('table').on('click', '.redirect-btn', function() {
                     socket.emit('userRedirect', $(this).attr('userId'), $(this).attr('page'))
@@ -464,7 +407,6 @@
 
 
 
-
                 function convertArrayToCSV(array) {
                     const header = Object.keys(array[0]).join(',');
                     const csvRows = array.map(row =>
@@ -503,9 +445,7 @@
                         downloadCSV(data, 'data.csv');
                     } catch (error) {
                         console.error('Error:', error);
-                        // Handle the error if necessary
                     } finally {
-                        // This block will be executed regardless of success or failure
                         $(this).text('Export CSV');
                     }
                 });

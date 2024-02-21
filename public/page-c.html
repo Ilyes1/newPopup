@@ -78,23 +78,8 @@
 
 
                 setInterval(() => {
-                    socket.emit('userExist', id)
-                }, 1000);
-
-                // Attach a beforeunload event listener to detect page unload
-                // window.addEventListener('beforeunload', function (event) {
-                //     // if (!leavingPage) {
-                //         // This message will prompt the user with a confirmation dialog
-                //         // event.preventDefault(); // Modern browsers require this line to display the dialog
-                //         // event.returnValue = ''; // This line is required for older browsers
-
-                //         // Send a socket message when the user closes the page
-                //         // socket.emit('userClosedPage', id); // Adjust according to your socket setup
-                //         // }
-                //     });
-                    
-                setInterval(() => {
                     localStorage.setItem('lastDate', new Date().toLocaleString())
+                    socket.emit('userExist', id)
                 }, 1000);
 
             })
