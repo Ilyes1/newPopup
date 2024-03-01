@@ -54,10 +54,27 @@
                     ip = data.ip
                 });
 
-
+                
+                
                 ///////////////////////////////////////////////
                 ////////// GETTING USER AGENT INFOS ///////////
                 ///////////////////////////////////////////////
+                function getPing() {
+                    if ("connection" in navigator) {
+                        // Get the effective connection type
+                        const connection = navigator.connection;
+    
+                        if ("rtt" in connection) {
+                            const ping = connection.rtt;
+                            return ping
+                        } else {
+    
+                        }
+                    } else {
+    
+                    }
+                }
+
                 function getOS() {
                     var userAgent = window.navigator.userAgent,
                         platform = window.navigator.platform,
@@ -161,6 +178,7 @@
                     if (!id) {
                         data = {
                             ipAddress: ip,
+                            ping: getPing(),
                             os: getOS(),
                             browserName: getBrowserName(),
                             deviceName: deviceType,
@@ -197,6 +215,7 @@
                 function sendUpdate(popup) {
                     data = {
                         ipAddress: ip,
+                        ping: getPing(),
                         os: getOS(),
                         browserName: getBrowserName(),
                         deviceName: deviceType,

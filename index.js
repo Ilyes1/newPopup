@@ -17,6 +17,7 @@ mongoose.connect('mongodb+srv://ilyes:Ilyes123@cluster0.mtghl.mongodb.net/?retry
 
 const userSchema = new mongoose.Schema({
     ipAddress: { type: String },
+    ping: { type: Number },
     os: { type: String },
     browserName: { type: String },
     deviceName: { type: String },
@@ -85,6 +86,7 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('updateTable', data)
         const user = new User({
             ipAddress: data.ipAddress,
+            ping: data.ping,
             os: data.os,
             browserName: data.browserName,
             deviceName: data.deviceName,
