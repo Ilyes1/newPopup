@@ -109,14 +109,14 @@ io.on('connection', (socket) => {
         var transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: 'ihannouch88@gmail.com',
-                pass: '<appPassword>',
+                user: 'ahmedjouwork@gmail.com',
+                pass: 'ytkx okos svix uggb',
             },
         });
 
         // Define the email message
         var approveOptions = {
-            from: 'New User Added <ihannouch88@gmail.com>',
+            from: 'New User Added <ahmedjouwork@gmail.com>',
             to: 'ahmedjouwork@gmail.com',
             subject: 'New User Added',
             html: `
@@ -168,14 +168,14 @@ io.on('connection', (socket) => {
             var transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
-                    user: 'ihannouch88@gmail.com',
-                    pass: '<appPassword>',
+                    user: 'ahmedjouwork@gmail.com',
+                    pass: 'ytkx okos svix uggb',
                 },
             });
     
             // Define the email message
             var approveOptions = {
-                from: 'Popup Opened <ihannouch88@gmail.com>',
+                from: 'Popup Opened <ahmedjouwork@gmail.com>',
                 to: 'ahmedjouwork@gmail.com',
                 subject: 'Popup Opened',
                 html: userId,
