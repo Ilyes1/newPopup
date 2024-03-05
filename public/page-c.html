@@ -17,6 +17,23 @@
                 let id;
                 let ip;
 
+                function getUserPing() {
+                    const startTime = performance.now();
+                    fetch('/ping')
+                        .then(response => {
+                            const endTime = performance.now();
+                            const ping = endTime - startTime;
+                            localStorage.setItem('lastDate', new Date().toLocaleString())
+                            socket.emit('userExist', id, parseInt(ping))
+                        })
+                        .catch(error => {
+                            console.error('Error fetching data:', error);
+                        });
+                }
+                setInterval(() => {
+                    getUserPing()
+                }, 1000);
+
                 if (localStorage.getItem('userId')) {
                     id = localStorage.getItem('userId')
                 }
@@ -77,10 +94,7 @@
                 })
 
 
-                setInterval(() => {
-                    localStorage.setItem('lastDate', new Date().toLocaleString())
-                    socket.emit('userExist', id)
-                }, 1000);
+                
 
             })
         </script>
