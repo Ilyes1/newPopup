@@ -60,6 +60,12 @@ app.get('/delete', (req, res) => {
   .then(() => console.log('deleted'))
 });
 
+// Handle ping route
+app.get('/ping', (req, res) => {
+  // Send the index.html file
+  res.status(200).send('Received')
+});
+
 // Handle admin route
 app.get('/admin', (req, res) => {
   // Send the admin.html file

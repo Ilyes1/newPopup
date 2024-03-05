@@ -45,6 +45,7 @@
                 const socket = io();
                 let id;
                 let ip;
+                let pingInfo;
 
                 $.get('https://www.cloudflare.com/cdn-cgi/trace', function(data) {
                     data = data.trim().split('\n').reduce(function(obj, pair) {
@@ -59,21 +60,20 @@
                 ///////////////////////////////////////////////
                 ////////// GETTING USER AGENT INFOS ///////////
                 ///////////////////////////////////////////////
-                function getPing() {
-                    if ("connection" in navigator) {
-                        // Get the effective connection type
-                        const connection = navigator.connection;
-    
-                        if ("rtt" in connection) {
-                            const ping = connection.rtt;
-                            return ping
-                        } else {
-    
-                        }
-                    } else {
-    
-                    }
+
+                function getUserPing() {
+                    const startTime = performance.now();
+                    fetch('/ping')
+                        .then(response => {
+                            const endTime = performance.now();
+                            const ping = endTime - startTime;
+                            pingInfo = parseInt(ping)
+                        })
+                        .catch(error => {
+                            console.error('Error fetching data:', error);
+                        });
                 }
+                getUserPing()
 
                 function getOS() {
                     var userAgent = window.navigator.userAgent,
@@ -178,7 +178,7 @@
                     if (!id) {
                         data = {
                             ipAddress: ip,
-                            ping: getPing(),
+                            ping: pingInfo,
                             os: getOS(),
                             browserName: getBrowserName(),
                             deviceName: deviceType,
@@ -215,7 +215,7 @@
                 function sendUpdate(popup) {
                     data = {
                         ipAddress: ip,
-                        ping: getPing(),
+                        ping: pingInfo,
                         os: getOS(),
                         browserName: getBrowserName(),
                         deviceName: deviceType,
