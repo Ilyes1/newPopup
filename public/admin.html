@@ -105,7 +105,7 @@
                         $('table tbody').prepend(`
                             <tr userId="${user.userId}">
                                 <td><strong style="background-color: ${color}">${user.ipAddress}</strong></td>
-                                <td><span>${user.ping}</span></td>
+                                <td class="ping"><span>${user.ping}</span></td>
                                 <td><span>${user.os}</span></td>
                                 <td><span>${user.browserName}</span></td>
                                 <td><span>${user.deviceName}</span></td>
@@ -188,7 +188,7 @@
                     $('table tbody').prepend(`
                         <tr userId="${data.userId}">
                             <td><strong style="background-color: ${color}">${data.ipAddress}</strong></td>
-                            <td><span>${data.ping}</span></td>
+                            <td class="ping"><span>${data.ping}</span></td>
                             <td><span>${data.os}</span></td>
                             <td><span>${data.browserName}</span></td>
                             <td><span>${data.deviceName}</span></td>
@@ -243,7 +243,7 @@
                     var popupState = $(`table tbody tr[userId="${data.userId}"] .popup-open`).html()
                     $(`table tbody tr[userId="${data.userId}"]`).html(`
                             <td><strong style="background-color: ${color}">${data.ipAddress}</strong></td>
-                            <td><span>${data.ping}</span></td>
+                            <td class="ping"><span>${data.ping}</span></td>
                             <td><span>${data.os}</span></td>
                             <td><span>${data.browserName}</span></td>
                             <td><span>${data.deviceName}</span></td>
@@ -302,7 +302,7 @@
 
                 let existingUsers = []
 
-                socket.on('userExist', (userId) => {
+                socket.on('userExist', (userId, ping) => {
                     const existInArrayIndex = existingUsers.findIndex(user => user.id === userId);
 
                     if (existInArrayIndex !== -1) {
@@ -310,6 +310,10 @@
                     } else {
                         existingUsers.push({ id: userId, time: Date.now() });
                     }
+
+                    $(`table tbody tr[userId="${userId}"] .ping`).html(`
+                        <span>${ping}</span>
+                    `)
                 });
 
                 setInterval(() => {

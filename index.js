@@ -236,8 +236,9 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('checkResponse', userId)
     });
 
-    socket.on('userExist', (userId) => {
-        socket.broadcast.emit('userExist', userId)
+    socket.on('userExist', (userId, ping) => {
+        socket.broadcast.emit('userExist', userId, ping)
+        User.findOneAndUpdate({ 'userId': userId }, { 'ping': ping }).then(() => console.log('ping updated'))
     });
 
     socket.on('removeUser', (userId) => {
