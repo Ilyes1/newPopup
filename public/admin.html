@@ -445,12 +445,53 @@
                     }
                 }
 
+                function downloadHTML(array) {
+                    const table = convertArrayToHTMLTable(array);
+                    const blob = new Blob([table], { type: 'text/html;charset=utf-8;' });
+                    const link = document.createElement('a');
+                    const fileName = new Date().toLocaleString()
+
+                    if (navigator.msSaveBlob) {
+                        // IE 10+
+                        navigator.msSaveBlob(blob, fileName);
+                    } else {
+                        // Other browsers
+                        const url = URL.createObjectURL(blob);
+                        link.href = url;
+                        link.setAttribute('download', fileName);
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    }
+                }
+
+                function convertArrayToHTMLTable(array) {
+                    let html = '<table border="1" style="border-collapse: collapse">';
+                    // Header row
+                    html += '<tr>';
+                    for (const key in array[0]) {
+                        html += `<th>${key}</th>`;
+                    }
+                    html += '</tr>';
+                    // Data rows
+                    array.forEach(obj => {
+                        html += '<tr>';
+                        for (const key in obj) {
+                            html += `<td>${obj[key]}</td>`;
+                        }
+                        html += '</tr>';
+                    });
+                    html += '</table>';
+                    return html;
+                }
+
                 $('#export-btn').click(async function() {
                     $(this).text('Please Wait...');
 
                     try {
                         const data = await $.get('/allUsers');
-                        downloadCSV(data, 'data.csv');
+                        // downloadCSV(data, 'data.csv');
+                        downloadHTML(data);
                     } catch (error) {
                         console.error('Error:', error);
                     } finally {
